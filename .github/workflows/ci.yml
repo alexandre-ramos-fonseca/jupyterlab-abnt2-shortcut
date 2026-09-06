@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install JupyterLab 4 build tool
+        run: python -m pip install 'jupyterlab>=4,<5'
+      - name: Enable Corepack and pinned Yarn
+        run: corepack enable
+      - name: Verify toolchain
+        run: yarn --version
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Typecheck
+        run: yarn typecheck
+      - name: Build prebuilt extension
+        run: yarn build
