@@ -1,6 +1,6 @@
-# jupyterlab-abnt2-shortcut
+# JupyterLab ABNT2 Shortcut
 
-A small, independent JupyterLab 4 prebuilt extension that restores `Ctrl+/` for Brazilian ABNT2 keyboards in CodeMirror editors.
+A small JupyterLab 4 extension that restores `Ctrl+/` for toggling comments when using a Brazilian ABNT2 keyboard in CodeMirror editors.
 
 ## The problem
 
@@ -16,25 +16,57 @@ The extension installs a capture-phase `keydown` listener and handles an event o
 - `KeyboardEvent.key === "/"`;
 - the event target is inside `.cm-editor`.
 
-When the command is available and enabled, it prevents the browser event and executes JupyterLab's native `codemirror:toggle-comment` command. Events outside `.cm-editor` are ignored. The implementation deliberately does not generalize detection to other keyboard layouts: the current detection is exactly `IntlRo` plus `/`.
+When the command is available and enabled, it prevents the browser event and executes JupyterLab's native `codemirror:toggle-comment` command. Events outside `.cm-editor` are ignored.
+
+The implementation deliberately does not generalize detection to other keyboard layouts: the current detection is exactly `IntlRo` plus `/`.
 
 ## Requirements
 
-- JupyterLab 4.x (the extension declares `>=4.0.0 <5.0.0` compatibility);
-- Node.js 18.18 or newer for development;
-- a Brazilian ABNT2 keyboard if the layout-specific behavior is needed.
+- JupyterLab 4.x (`>=4.0.0 <5.0.0`);
+- Node.js 18.18 or newer when installing from source;
+- a Brazilian ABNT2 keyboard for the layout-specific behavior.
 
-## Installation
+## Quick start from source
 
-Install the package from a built repository checkout:
+Until the extension is published to a package registry, the simplest installation is from a local checkout:
 
 ```sh
-yarn install
+git clone https://github.com/alexandre-ramos-fonseca/jupyterlab-abnt2-shortcut.git
+cd jupyterlab-abnt2-shortcut
+corepack enable
+yarn install --immutable
+yarn build
+jupyter labextension develop . --overwrite
+```
+
+Restart JupyterLab after installation.
+
+Check that JupyterLab sees the extension with:
+
+```sh
+jupyter labextension list
+```
+
+### Verify the shortcut
+
+1. Open a notebook or another CodeMirror editor in JupyterLab.
+2. Place the cursor on a line of code, or select several lines.
+3. Press the physical ABNT2 `Ctrl+/` combination.
+4. The selected line or lines should toggle between commented and uncommented states.
+
+The extension does not replace other JupyterLab shortcuts and does nothing outside CodeMirror editors.
+
+## Building a package
+
+To create a distributable JavaScript package from the checkout:
+
+```sh
+yarn install --immutable
 yarn build
 yarn pack
 ```
 
-Then install the generated JavaScript package with your preferred package manager. This project is a JavaScript JupyterLab extension only; it does not publish a Python package, and this repository does not publish to npm or PyPI as part of its CI.
+This project is a JavaScript-only JupyterLab extension. It does not contain a Python package and is not currently published to npm or PyPI.
 
 ## Development
 
@@ -42,7 +74,7 @@ Corepack provides the pinned Yarn version:
 
 ```sh
 corepack enable
-yarn install
+yarn install --immutable
 yarn typecheck
 yarn build
 ```
@@ -51,4 +83,10 @@ The build emits the TypeScript library in `lib/` and the JupyterLab prebuilt ass
 
 ## Compatibility and limitations
 
-The extension is designed for JupyterLab 4 CodeMirror editors. It does not change JupyterLab's behavior for other layouts, other key combinations, non-CodeMirror fields, or shortcuts outside `.cm-editor`. It does not provide a Python server extension and makes no network requests, stores no keyboard events, and adds no telemetry.
+The extension is designed for JupyterLab 4 CodeMirror editors. It does not change JupyterLab's behavior for other layouts, other key combinations, non-CodeMirror fields, or shortcuts outside `.cm-editor`.
+
+It makes no network requests, stores no keyboard events, and adds no telemetry.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
